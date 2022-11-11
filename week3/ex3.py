@@ -6,10 +6,10 @@ import shutil
 import time
 from dataclasses import dataclass
 
-from pyspark.sql import functions
+from pyspark.sql import functions as f
 from pyspark.sql import DataFrame
 from pyspark.sql import SparkSession
-
+from dataclasses import dataclass
 
 def main():
     # Create the Spark session
@@ -30,17 +30,67 @@ def main():
     # Task 1: File "data/sales_data_sample.csv" contains sales data of a retailer.
     #         Study the file and read the data into DataFrame retailerDataFrame.
     #         NOTE: the resulting DataFrame should have 25 columns
-    retailerDataFrame: DataFrame = __unknown__
 
+    retailerDataFrame: DataFrame = spark.read.option("header", "true").option("delimiter", ";").csv("data/sales_data_sample.csv")
 
+    retailerDataFrame.show()
 
     printTaskLine(2)
     # Task 2: Find the best 10 selling days. That is the days for which QUANTITYORDERED * PRICEEACH
     #         gets the highest values.
-    best10DaysDF: DataFrame = __unknown__
+    best10DaysDF: DataFrame = retailerDataFrame.groupBy("ORDERDATE")\
+        .agg(f.max(f.col("QUANTITYORDERED")*f.col("PRICEEACH"))).orderBy(f.desc("max((QUANTITYORDERED * PRICEEACH))"))
+
+    best10DaysDF.show(10)
 
 
 
+    # Task 5: In the streaming version of the analysis, the streaming data will be added
+    #         into the directory streamingData. The streaming data is similar to the one
+    #         in the directory "data". It is just divided into multiple files.
+    #
+    #         Create a DataFrame that will work with streaming data
+    #         that is given in the same format as for the static retailerDataFrame.
+    #
+    #         Note: you cannot really test this task before you have also done the tasks 6 and 7.
+
+    retailerStreamingDF: DataFrame = spark.readStream.option("sep", ";").schema(retailerDataFrame.schema).csv("data/sales_data_sample.csv")
+    sq = retailerStreamingDF.writeStream.format('memory').queryName("retail_query").start()
+
+    printTaskLine(6)
+    # Task 6: Find the best selling days in the streaming data
+    #bestDaysDFStreaming = retailerStreamingDF.select("*").show()
+
+
+
+    printTaskLine(7)
+    # Task 7: Test your solution with streaming method by writing the 10 best selling days to stdout
+    #         whenever the DataFrame changes
+
+
+
+    # You can test your solution by uncommenting the following code snippet.
+    # The loop adds a new CSV file to the directory "streamingData" every 5th second.
+    # If you rerun the test remove all the CSV files first from the directory "streamingData".
+    # You may need to wait for a while to see the stream processing results while running the program.
+
+    # for file in glob.glob("streamingDataRepo/*"):
+    #     shutil.copy(file, f"streamingData/{pathlib.Path(file).name}")
+    #     time.sleep(5)
+
+    sq.stop()
+    # Stop the Spark session
+    spark.stop()
+
+# Helper function to separate the task outputs from each other
+def printTaskLine(taskNumber: int) -> None:
+    print(f"======\nTask {taskNumber}\n======")
+
+
+if __name__ == "__main__":
+    main()
+
+'''
     printTaskLine(3)
     # Task 3: This task is originally designed for Scala language. It is not very good for Python
     #         because Python does not support Spark Datasets. Instead of Scala's case class,
@@ -54,17 +104,27 @@ def main():
     #         Then instantiate a DataFrame of Sales and query for the sales on 2019 and
     #         the year of maximum sales.
 
+    @dataclass
+    class Sales:
+        year: int
+        euros: int
+
+        def __init__(self, year: int, euros: int):
+            self.year = year
+            self.euros = euros
+
+
     salesList = [Sales(2015, 325), Sales(2016, 100), Sales(2017, 15), Sales(2018, 1000),
                  Sales(2019, 50), Sales(2020, 750), Sales(2021, 950), Sales(2022, 400)]
-    salesDS = spark.__unknown__
 
-    sales2019 = salesDS.__unknown__
+    salesColumns = ["year","euros"]
+    salesDS = spark.createDataFrame(salesList).toDF(*salesColumns)
+
+    sales2019 = salesDS.show(0)
     print(f"Sales for 2019: {sales2019.euros}")
 
-    maximumSales = salesDS.__unknown__
+    maximumSales = salesDS.select(f.max(f.col("euros")))
     print(f"Maximum sales: year = {maximumSales.year}, euros = {maximumSales.euros}")
-
-
 
     printTaskLine(4)
     # Task 4: Continuation from task 3.
@@ -81,52 +141,4 @@ def main():
 
     maximumSales = salesDS.__unknown__
     print(f"Maximum total sales: year = {maximumSales.year}, euros = {maximumSales.euros}")
-
-
-
-    printTaskLine(5)
-    # Task 5: In the streaming version of the analysis, the streaming data will be added
-    #         into the directory streamingData. The streaming data is similar to the one
-    #         in the directory "data". It is just divided into multiple files.
-    #
-    #         Create a DataFrame that will work with streaming data
-    #         that is given in the same format as for the static retailerDataFrame.
-    #
-    #         Note: you cannot really test this task before you have also done the tasks 6 and 7.
-    retailerStreamingDF: DataFrame = __unknown__
-
-
-
-    printTaskLine(6)
-    # Task 6: Find the best selling days in the streaming data
-    bestDaysDFStreaming = __unknown__
-
-
-
-    printTaskLine(7)
-    # Task 7: Test your solution with streaming method by writing the 10 best selling days to stdout
-    #         whenever the DataFrame changes
-
-    __unknown__
-
-    # You can test your solution by uncommenting the following code snippet.
-    # The loop adds a new CSV file to the directory "streamingData" every 5th second.
-    # If you rerun the test remove all the CSV files first from the directory "streamingData".
-    # You may need to wait for a while to see the stream processing results while running the program.
-
-    # for file in glob.glob("streamingDataRepo/*"):
-    #     shutil.copy(file, f"streamingData/{pathlib.Path(file).name}")
-    #     time.sleep(5)
-
-
-    # Stop the Spark session
-    spark.stop()
-
-
-# Helper function to separate the task outputs from each other
-def printTaskLine(taskNumber: int) -> None:
-    print(f"======\nTask {taskNumber}\n======")
-
-
-if __name__ == "__main__":
-    main()
+'''
