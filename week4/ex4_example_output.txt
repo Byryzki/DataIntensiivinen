@@ -1,0 +1,126 @@
+======
+Task 1
+======
++---+-----+
+|  X|label|
++---+-----+
+|0.0|  0.0|
+|0.3|  0.5|
+|1.5|  1.4|
+|2.2|  2.4|
+|3.0|  3.7|
+|3.2|  3.9|
+|3.5|  4.1|
+|4.0|  4.3|
++---+-----+
+COMMENT: the training set is chosen randomly, so the X-values and even the number of them can differ
+
+======
+Task 2
+======
++---+-----+--------+
+|  X|label|features|
++---+-----+--------+
+|0.0|  0.0|   [0.0]|
+|0.3|  0.5|   [0.3]|
+|1.5|  1.4|   [1.5]|
+|2.2|  2.4|   [2.2]|
+|3.0|  3.7|   [3.0]|
+|3.2|  3.9|   [3.2]|
+|3.5|  4.1|   [3.5]|
+|4.0|  4.3|   [4.0]|
++---+-----+--------+
+
+======
+Task 3
+======
+aggregationDepth: suggested depth for treeAggregate (>= 2). (default: 2)
+elasticNetParam: the ElasticNet mixing parameter, in range [0, 1]. For alpha = 0, the penalty is an L2 penalty. For alpha = 1, it is an L1 penalty. (default: 0.0, current: 0.8)
+epsilon: The shape parameter to control the amount of robustness. Must be > 1.0. Only valid when loss is huber (default: 1.35)
+featuresCol: features column name. (default: features, current: features)
+fitIntercept: whether to fit an intercept term. (default: True)
+labelCol: label column name. (default: label)
+loss: The loss function to be optimized. Supported options: squaredError, huber. (default: squaredError)
+maxBlockSizeInMB: maximum memory in MB for stacking input data into blocks. Data is stacked within partitions. If more than remaining data size in a partition then it is adjusted to the data size. Default 0.0 represents choosing optimal value, depends on specific algorithm. Must be >= 0. (default: 0.0)
+maxIter: max number of iterations (>= 0). (default: 100, current: 10)
+predictionCol: prediction column name. (default: prediction)
+regParam: regularization parameter (>= 0). (default: 0.0, current: 0.3)
+solver: The solver algorithm for optimization. Supported options: auto, normal, l-bfgs. (default: auto)
+standardization: whether to standardize the training features before fitting the model. (default: True)
+tol: the convergence tolerance for iterative algorithms (>= 0). (default: 1e-06)
+weightCol: weight column name. If this is not set or empty, we treat all instance weights as 1.0. (undefined)
++---+-----+--------+------------------+
+|  X|label|features|        prediction|
++---+-----+--------+------------------+
+|0.0|  0.0|   [0.0]|0.4645670983568633|
+|0.3|  0.5|   [0.3]|0.7456427460372886|
+|1.5|  1.4|   [1.5]|1.8699453367589902|
+|2.2|  2.4|   [2.2]| 2.525788514679983|
+|3.0|  3.7|   [3.0]| 3.275323575161117|
+|3.2|  3.9|   [3.2]| 3.462707340281401|
+|3.5|  4.1|   [3.5]| 3.743782987961826|
+|4.0|  4.3|   [4.0]| 4.212242400762535|
++---+-----+--------+------------------+
+COMMENT: the exact prediction values depend on the training data and the chosen parameters for the linear regression model
+
+======
+Task 4
+======
++---+-----+--------+------------------+
+|  X|label|features|        prediction|
++---+-----+--------+------------------+
+|0.0|  0.0|   [0.0]|0.4645670983568633|
+|0.3|  0.5|   [0.3]|0.7456427460372886|
+|0.9|  0.8|   [0.9]|1.3077940413981395|
+|1.0|  0.8|   [1.0]| 1.401485923958281|
+|2.0|  2.2|   [2.0]|2.3384047495596993|
+|2.2|  2.4|   [2.2]| 2.525788514679983|
+|3.0|  3.7|   [3.0]| 3.275323575161117|
+|4.0|  4.3|   [4.0]| 4.212242400762535|
+|1.5|  1.4|   [1.5]|1.8699453367589902|
+|3.2|  3.9|   [3.2]| 3.462707340281401|
+|3.5|  4.1|   [3.5]| 3.743782987961826|
+|1.2|  1.1|   [1.2]|1.5888696890785647|
++---+-----+--------+------------------+
+
+======
+Task 5
+======
++----+--------------------+
+|   X|          prediction|
++----+--------------------+
+|-0.5|-0.00389231444384...|
+|3.14|  3.4064922107453155|
+| 7.5|   7.491458290367497|
++----+--------------------+
+COMMENT: show() added to the print out the asked predictions
+
+======
+Task 6
+======
++----+------------------+
+|   X|        prediction|
++----+------------------+
+|10.1| 9.927447236931183|
+|11.2|10.958057945092744|
+|12.3|11.988668653254305|
+|13.4|13.019279361415864|
+|14.5|14.049890069577422|
+|15.6|15.080500777738981|
+|16.7|16.111111485900544|
+|17.8|  17.1417221940621|
++----+------------------+
+
+======
+Task 7
+======
+COMMENT: no console output but 4 files written to folder "results", one of which is a csv file with the following contents:
+X,prediction
+10.1,9.927447236931183
+11.2,10.958057945092744
+12.3,11.988668653254305
+13.4,13.019279361415864
+14.5,14.049890069577422
+15.6,15.080500777738981
+16.7,16.111111485900544
+17.8,17.1417221940621
